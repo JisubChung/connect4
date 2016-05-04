@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/JisubChung/connect4#readme",
   "dependencies": {
+    "dotenv": "^2.0.0",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
+    "node-env-file": "^0.1.8",
     "socket.io": "^1.4.6"
   }
 }
