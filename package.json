@@ -1,17 +1,24 @@
 {
   "name": "connect4",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Play connect 4 with friends online",
+  "main": "app.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JisubChung/connect4.git"
+  },
+  "author": "Ji-sub Chung",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JisubChung/connect4/issues"
+  },
+  "homepage": "https://github.com/JisubChung/connect4#readme",
   "dependencies": {
-    "body-parser": "~1.13.2",
-    "cookie-parser": "~1.3.5",
-    "debug": "~2.2.0",
-    "ejs": "~2.3.3",
-    "express": "~4.13.1",
-    "morgan": "~1.6.1",
-    "serve-favicon": "~2.3.0"
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "socket.io": "^1.4.6"
   }
 }
