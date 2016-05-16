@@ -1,0 +1,22 @@
+extends layout
+block javascript
+    script(src='/bower_components/jquery/dist/jquery.min.js')
+    script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
+    script(src='/javascript/table.js')
+block content
+    .container
+        .row
+            #board.col-xs-6
+                table.center-table
+        .row
+            .col-xs-3
+                .p1-score
+                    p 10
+            .col-xs-3
+                .p2-score
+                    p 80
+        .row
+            .form-group
+                label(for="shareUrl").col-sm-3.control-label.share-label Share URL:
+                .col-sm-9
+                    input(type='text' ReadOnly).form-control

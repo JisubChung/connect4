@@ -1,0 +1,21 @@
+doctype html
+html
+  head
+    title Connect 4 - 484 Project
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    #wrap
+      nav.navbar.navbar-default(role='navigation')
+        .container-fluid
+          .navbar-header
+            a.navbar-brand(href='#') Connect 4
+      block content
+    #footer
+      .container
+        p.text-muted
+          | Developed by
+          | <a href="http://github.com/gnarula">Gaurav Narula</a> for Nettuts
+    block javascript
+      script(src='/bower_components/jquery/dist/jquery.min.js')
+      script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
+      script(src='/socket.io/socket.io.js')

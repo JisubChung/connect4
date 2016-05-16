@@ -1,0 +1,7 @@
+## ide files
+.idea/
+
+## node modules
+node_modules/
+
+bower_components/
