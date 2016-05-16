@@ -20,6 +20,8 @@ var app = express(),
 
 var usernames = [];
 
+app.set('port', (process.env.PORT || 3001));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -293,8 +295,13 @@ function check_draw(room, callback) {
 }
 
 // Set server port and run it
-server.listen(3001, function () {
-    console.log('server is running on http://localhost:3001');
-});
+// server.listen(3001, function () {
+//     console.log('server is running on http://localhost:3001');
+// });
+
+app.listen(app.get('port'), function() {
+  console.log("Node app is running at localhost:" + app.get('port'))
+})
+
 
 module.exports = app;
