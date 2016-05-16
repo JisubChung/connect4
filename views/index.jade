@@ -2,7 +2,7 @@ extends layout
 block javascript
     script(src='/bower_components/jquery/dist/jquery.min.js')
     script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
-    script(src='/javascript/table.js')
+    script(src='/javascript/client.js')
 block content
     .container
         .row
@@ -19,4 +19,4 @@ block content
             .form-group
                 label(for="shareUrl").col-sm-3.control-label.share-label Share URL:
                 .col-sm-9
-                    input(type='text' ReadOnly).form-control
+                    input(type='text', data-room=share, name='shareUrl', value=shareURL ReadOnly).form-control
