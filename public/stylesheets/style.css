@@ -2,18 +2,50 @@
 html,
 body {
     height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Droid Sans", sans-serif;
+}
+
+.header {
+    background-color: #D22030;
+    text-align: center;
+    font-size: 2em;
+}
+
+.header a, a:link, a:visited, a:hover, a:active {
+    color: #d8d2c4;
+    text-decoration: none;
 }
 
 .row {
-    background-color: darkgrey;
+    background-color: #a9aba9;
 }
 
-.col-xs-3 {
-    background-color: greenyellow;
+.row2 {
+    background-color: #a9aba9;
+    border-radius: 100%;
+}
+
+.turn-indicator {
+    margin: 20px 0 20px 0;
+    background-color: #a9aba9;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.cell {
+    background-color: #a9aba9;
 }
 
 .box {
     background-color: #67b168;
+    border: double;
+    border-radius: 20px;
+}
+
+#board {
+    background-color: #e64b36;
 }
 
 /* Wrapper for page content to push down footer */
@@ -22,6 +54,7 @@ body {
     height: auto;
     margin: 0 auto -60px;
     padding: 0 0 60px;
+    background-color: #fff;
 }
 
 #footer {
@@ -34,7 +67,7 @@ body {
 }
 
 .container {
-    margin: 20px 0;
+    margin: 0 20% 0 20%;
     color: #fff;
 }
 
@@ -57,6 +90,7 @@ table tr td {
     width: 50px;
     height: 50px;
     border: 1px solid #3A87AD;
+    border-radius: 50px;
 }
 
 .center-table {
@@ -65,8 +99,12 @@ table tr td {
     float: none !important;
 }
 
+p {
+    margin: 0;
+    padding: 0;
+}
+
 .p1-score, .p2-score {
-    padding: 185px 0;
     width: 50px;
     height: 50px;
     font-size: 25px;
@@ -80,7 +118,7 @@ table tr td {
     float: right;
 }
 .p1-score p {
-    background: #FFC333;
+    background: #5b4c93;
 }
 
 .p1-score p .current {
@@ -89,8 +127,9 @@ table tr td {
 }
 
 .p2-score p {
-    background: #FB6B5B;
+    background: #fdbf56;
 }
+
 .current {
     border: 5px solid;
 }
@@ -99,3 +138,18 @@ table tr td {
     line-height: 34px;
     text-align: right;
 }
+
+.form-group {
+    background-color: #d8d2c4;
+    color: black;
+    height: 50px;
+}
+    .form-group label {
+        position: relative;
+    }
+    .form-group input {
+        position: relative;
+        top: 58%;
+        left: -78px;
+        width: 200px;
+    }

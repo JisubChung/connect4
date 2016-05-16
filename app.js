@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var async = require('async');
 
 // Database
 // var mongo = require('mongodb');
@@ -34,16 +35,6 @@ app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
 app.use('/', routes);
 app.use('/users', users);
-
-app.get('/', function(req, res) {
-    share = generateRoom(6);
-    res.render('index.jade', {shareURL: req.protocol + '://' + req.get('host') + req.path + share, share: share});
-});
-
-app.get('/:room([A-Za-z0-9]{6})', function(req, res) {
-    share = req.params.room;
-    res.render('index.jade', {shareURL: req.protocol + '://' + req.get('host') + '/' + share, share: share});
-});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -76,65 +67,229 @@ app.use(function (err, req, res, next) {
     });
 });
 
+var games = {};
+
 /**
  * This is the socket server
  * 'connection' is basically a listener (which listens to http server) for
  * incoming socket events
  */
 io.on('connection', function (socket) {
-    //let's create and check for user uniqueness
-    socket.on('new user', function (data, callback) {
-        if (usernames.indexOf(data) != -1) {
-            callback(false);
-        } else {
-            callback(true);
-            socket.nickname = data;
-            usernames.push(socket.nickname);
-            updateUsernames();
+
+    // when the server hears a 'join' request (data = {room: room})
+    socket.on('join', function(data) {
+
+        // if there is someone waiting for a game
+        if(data.room in games) {
+            console.log('test');
+            games[data.room].player1.emit('notify', {connected: 1, turn: true});
+            socket.emit('notify', {connected: 1, turn: false});
+            if(typeof games[data.room].player2 != "undefined") {
+                socket.emit('leave');
+                return;
+            }
+            socket.color = '#fdbf56';
+            socket.join(data.room);
+            socket.room = data.room;
+            socket.pid = -1;
+            games[data.room].player2 = socket;
+            // Set opponents
+            socket.opponent = games[data.room].player1;
+            games[data.room].player1.opponent = games[data.room].player2;
+
+            // Set turn
+            socket.turn = false;
+            socket.opponent.turn = true;
+
+            socket.emit('assign', {pid: 2});
+        }
+
+        // else we create a new room
+        else {
+            socket.color = '#5b4c93';
+            socket.join(data.room);
+            socket.room = data.room;
+            socket.pid = 1;
+            socket.turn = false;
+            games[data.room] = {
+                player1: socket,
+                board: [[0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0]]
+            };
+
+            socket.emit('assign', {pid: 1});
         }
     });
 
-    //you can make custom events such as this 'chat message'
-    socket.on('chat message', function (data) {
-        io.emit('chat message', {msg: data, user: socket.nickname});
+    socket.on('click', function(data) {
+        var results = [socket.turn, socket.opponent, socket.room, socket.pid ];
+        results[1].emit('changeTurn');
+        //room is undefined
+        if(results[0]) {
+            socket.turn = false;
+            results[1].turn = true;
+
+            var i = 5;
+            while(i >= 0) {
+                if(games[results[2]].board[i][data.col] == 0) {
+                    break;
+                }
+                i--;
+            }
+            if(i >= 0 && data.col >= 0) {
+                games[results[2]].board[i][data.col] = results[3]
+                socket.emit('drop', {row: i, col: data.col, color: socket.color});
+                results[1].emit('drop', {row: i, col: data.col, color: socket.color}); //TODO: replace this with opponent color
+
+                var win = false;
+                check.forEach(function(method) {
+                    method(results[2], i, data.col, function(player, pairs) {
+                        win = true;
+                        if(player == 1) {
+                            games[results[2]].player1.emit('reset', {text: 'You Won!', 'inc': [1,0], highlight: pairs });
+                            games[results[2]].player2.emit('reset', {text: 'You Lost!', 'inc': [1,0], highlight: pairs });
+                        }
+                        else {
+                            games[results[2]].player1.emit('reset', {text: 'You Lost!', 'inc': [0,1], highlight: pairs });
+                            games[results[2]].player2.emit('reset', {text: 'You Won!', 'inc': [0,1], highlight: pairs });
+                        }
+                        games[results[2]].board = [[0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0]];
+                    });
+                });
+                if(win) {
+                    return;
+                }
+                check_draw(results[2], function() {
+                    games[results[2]].board = [[0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0]];
+                    io.sockets.in(results[2]).emit('reset', {'text': 'Game Drawn', 'inc': [0,0]});
+                });
+            }
+        }
+        else {
+            console.log('Opponent\'s turn');
+        }
     });
 
-    //the wbm socket
-    socket.on('webm', function (url) {
-        io.emit('webm', url);
+    socket.on('continue', function() {
+        socket.turn = function(err, turn) {
+            socket.emit('notify', {connected: 1, turn: turn});
+        };
     });
 
-    /**
-     * This handles the usernames when a user exits the application
-     * 'disconnect' is a built in listener that listens in on when
-     * a disconnect occurs
-     */
-    socket.on('disconnect', function () {
-        if (!socket.nickname) return;
-        usernames.splice(usernames.indexOf(socket.usernames), 1);
-        updateUsernames();
+    socket.on('disconnect', function() {
+        console.log('Disconnected');
+        socket.room = function(err, room) {
+            io.sockets.in(room).emit('leave');
+            if(room in games) {
+                delete games.room;
+            }
+        };
     });
-    // TODO: Figure out if we want webm to be integrated in the chat or apart
-    // TODO: Listener for new users
-    // TODO: Listener for new message (connect to db)
 });
 
-/**
- * Updates the usernames lis
- */
-function updateUsernames() {
-    io.emit('usernames', usernames);
+function getFour(row, col, direction) {
+    var dir = [], i;
+    for (i = 0; i < 4; i++) {
+        dir.push([row, col]);
+        row+=direction[0];
+        col+=direction[1];
+    }
+    return dir;
 }
 
-function generateRoom(length) {
-    var haystack = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var room = '';
+//these are going to check the win conditions
+var check = [];
 
-    for (var i = 0; i < length; i++) {
-        room += haystack.charAt(Math.floor(Math.random() * 62));
+check.push(function check_horizontal(room, row, startColumn, callback) {
+    for(var i = 1; i < 5; i++) {
+        var count = 0;
+        var column = startColumn + 1 - i;
+        var columnEnd = startColumn + 4 - i;
+        //edge condition
+        if(columnEnd > 6 || column < 0) {
+            continue;
+        }
+        var pairs = getFour(row, column, [0,1]);
+        for(var j = column; j < columnEnd + 1; j++) {
+            count += games[room]['board'][row][j];
+        }
+        // you win
+        if(count == 4) {
+            callback(1, pairs);
+        }
+         // you lose
+        else if(count == -4) {
+            callback(2, pairs);
+        }
     }
+});
 
-    return room;
+check.push(function check_vertical(room, startRow, column, callback) {
+    for(var i = 1; i < 5; i++) {
+        var count = 0;
+        var row = startRow + 1 - i;
+        var rowEnd = startRow + 4 - i;
+        if(rowEnd > 5 || row < 0) {
+            continue;
+        }
+        var pairs = getFour(row, column, [1,0]);
+        for(var j = row; j < rowEnd + 1; j++) {
+            count += games[room]['board'][j][column];
+        }
+        if(count == 4)
+            callback(1, pairs);
+        else if(count == -4)
+            callback(2, pairs);
+    }
+});
+
+check.push(function check_leftDiagonal(room, startRow, startColumn, callback) {
+    for(var i = 1; i < 5; i++) {
+        var count = 0;
+        var row = startRow + 1 - i;
+        var rowEnd = startRow + 4 - i;
+        var column = startColumn + 1 - i;
+        var columnEnd = startColumn + 4 - i;
+        if(column < 0 || columnEnd > 6 || rowEnd > 5 || row < 0) {
+            continue;
+        }
+        var pairs = getFour(row, column, [1,1]);
+        for(var j = 0; j < pairs.length; j++) {
+            count += games[room]['board'][pairs[j][0]][pairs[j][1]];
+        }
+        if(count == 4)
+            callback(1, pairs);
+        else if(count == -4)
+            callback(2, pairs);
+    }
+});
+
+check.push(function check_rightDiagonal(room, startRow, startColumn, callback) {
+    for(var i = 1; i < 5; i++) {
+        var count = 0;
+        var row = startRow + 1 - i;
+        var rowEnd = startRow + 4 - i;
+        var column = startColumn -1 + i;
+        var columnEnd = startColumn - 4 + i;
+        if(column < 0 || columnEnd > 6 || rowEnd > 5 || row < 0) {
+            continue;
+        }
+        var pairs = getFour(row, column, [1,-1]);
+        for(var j = 0; j < pairs.length; j++) {
+            count += games[room]['board'][pairs[j][0]][pairs[j][1]];
+        }
+        if(count == 4)
+            callback(1, pairs);
+        else if(count == -4)
+            callback(2, pairs);
+    }
+});
+
+function check_draw(room, callback) {
+    for(var val in games[room]['board'][0]) {
+        if(val == 0)
+            return;
+    }
+    callback();
 }
 
 // Set server port and run it

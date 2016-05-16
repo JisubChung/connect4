@@ -6,18 +6,17 @@ block javascript
     script(src='/javascript/client.js')
 block content
     .container
+        .row2
+            p.turn-indicator turn indicator
         .row
             #board.col-xs-6
                 table.center-table
         .row
-            .col-xs-3
-                .p1-score
-                    p 1
-            .col-xs-3
-                .p2-score
-                    p 2
+            .p1-score
+                p 0
+            .p2-score
+                p 0
         .row
             .form-group
-                label(for="shareUrl").col-sm-3.control-label.share-label Share URL:
-                .col-sm-9
-                    input(type='text', data-room=share, name='shareUrl', value=shareURL ReadOnly).form-control
+                label(for="shareUrl") Share URL:
+                input(type='text', data-room=share, name='shareUrl', value=shareURL ReadOnly).form-control

@@ -6,13 +6,10 @@ html
         block javascript
             script(src='/socket.io/socket.io.js')
             script(src='/bower_components/jquery/dist/jquery.min.js')
-            script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
     body
+        .header
+            a(href='#') Connect 4
         #wrap
-            nav.navbar.navbar-default(role='navigation')
-                .container-fluid
-                    .navbar-header
-                        a.navbar-brand(href='#') Connect 4
             block content
         #footer
             .container
