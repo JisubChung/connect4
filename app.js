@@ -1,3 +1,4 @@
+module.exports = app;
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -18,9 +19,9 @@ var app = express(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server);
 
-var usernames = [];
-
 app.set('port', (process.env.PORT || 3001));
+
+var usernames = [];
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -218,7 +219,7 @@ check.push(function check_horizontal(room, row, startColumn, callback) {
         if(count == 4) {
             callback(1, pairs);
         }
-         // you lose
+        // you lose
         else if(count == -4) {
             callback(2, pairs);
         }
@@ -295,13 +296,8 @@ function check_draw(room, callback) {
 }
 
 // Set server port and run it
-// server.listen(3001, function () {
-//     console.log('server is running on http://localhost:3001');
-// });
-
-app.listen(app.get('port'), function() {
-  console.log("Node app is running at localhost:" + app.get('port'))
-})
-
+server.listen(app.get('port'), function () {
+    console.log('server is running on http://localhost:' + app.get('port'));
+});
 
 module.exports = app;
