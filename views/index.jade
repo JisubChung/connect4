@@ -1,5 +1,6 @@
 extends layout
 block javascript
+    script(src='/socket.io/socket.io.js')
     script(src='/bower_components/jquery/dist/jquery.min.js')
     script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
     script(src='/javascript/client.js')
@@ -11,10 +12,10 @@ block content
         .row
             .col-xs-3
                 .p1-score
-                    p 10
+                    p 1
             .col-xs-3
                 .p2-score
-                    p 80
+                    p 2
         .row
             .form-group
                 label(for="shareUrl").col-sm-3.control-label.share-label Share URL:

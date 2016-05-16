@@ -13,9 +13,9 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var app = express(),
+    server = require('http').createServer(app),
+    io = require('socket.io').listen(server);
 
 var usernames = [];
 
@@ -138,7 +138,7 @@ function generateRoom(length) {
 }
 
 // Set server port and run it
-http.listen(3001, function () {
+server.listen(3001, function () {
     console.log('server is running on http://localhost:3001');
 });
 

@@ -1,17 +1,28 @@
 // frontend js
 var table = $('<table></table>').addClass('board');
+var socket = io();
 
-$(document).ready(function () {
-    for(i=0; i<6; i++){
-        var row = $('<tr></tr>'); //.addClass('bar').text('result ' + i);
-        for(j=0; j<7; j++) {
-            row.append('<td></td>').addClass('box');
-        }
-        console.log(row);
-        table.append(row);
+function Player(room, pid) {
+    this.room = room;
+    this.pid = pid;
+}
+
+var room = $('input').data('room');
+var player = new Player(room, '', '');
+
+socket.on('connect', function() {
+    socket.emit('join', {room: room});
+});
+
+socket.on('assign', function(data) {
+    player.color = data.color;
+    player.pid = data.pid;
+    if(player.pid == 1) {
+        $('.p1-score p').addClass('current');
     }
-
-    $('#board').append(table);
+    else {
+        $('.p2-score p').addClass('current');
+    }
 });
 
 $('.box').click(function() {
@@ -23,16 +34,14 @@ $('.box').click(function() {
     socket.emit('click', click);
 });
 
-    // for (var i = 0; i < 6; i++) {
-    //     $('#board.col-xs-6').append('');
-    //     $('#board').last().append($('#board tr'));
-    //     $('#board').append($('#board td')).last().text('hi');
-    //     console.log(i);
-    //     for (var j = 0; j < 7; j++) {
-    //         $('#board tr').last().append('by');
-    //         $('#board td').last().append('hi');
-    //         // $('#board tr').last().append('<h6>ppp</h6>');
-    //         // $('#board td').last().addClass('box').attr('data-row', i).attr('data-column', j);
-    //
-    //     }
-    // }
+$(document).ready(function () {
+    for(i=0; i<6; i++){
+        var row = $('<tr></tr>'); //.addClass('bar').text('result ' + i);
+        for(j=0; j<7; j++) {
+            row.append('<td></td>').addClass('box');
+        }
+        table.append(row);
+    }
+
+    $('#board').append(table);
+});
