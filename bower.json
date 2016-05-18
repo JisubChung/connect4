@@ -1,0 +1,20 @@
+{
+  "name": "connect4",
+  "description": "",
+  "main": "",
+  "authors": [
+    "JisubChung <jisub.chung0@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/JisubChung/connect4",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
+}
