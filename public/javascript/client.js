@@ -31,7 +31,10 @@ socket.on('notify', function(data) {
         }
     }
     var url = window.location.host;
-    $('.row3 .form-group').replaceWith('<a href=' + url + '>Click here to start new game</a>');
+    $('.row3 .form-group').replaceWith('<span>Click here to start new game</span>').click(function() {
+        $(this).slideUp();
+        window.location.href = window.location.host;
+    });
     $('.row3 input').css('display','none');
 });
 
@@ -109,6 +112,12 @@ $(document).ready(function () {
             col: $(this).data('col')
         };
         socket.emit('click', click);
+    });
+    $('.row3').click(function() {
+        if($(this).text() === 'Click here to start new game') {
+            window.location.href = window.location.host;
+            //console.log(window.location.host);
+        }
     });
 });
 
