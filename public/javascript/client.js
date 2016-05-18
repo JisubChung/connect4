@@ -63,9 +63,9 @@ socket.on('reset', function(data) {
     $('.p2-score p').html(p2);
 });
 
-// socket.on('leave', function() {
-//     window.location = '/landingPage';
-// });
+socket.on('leave', function() {
+    $('.turn-indicator').text('your opponent left, refresh to start a new game').css('color', 'blue');
+});
 
 socket.on('drop', function(data) {
     var row = 0;

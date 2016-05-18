@@ -178,7 +178,6 @@ io.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function() {
-        console.log('Disconnected');
         socket.room = function(err, room) {
             io.sockets.in(room).emit('leave');
             if(room in games) {
