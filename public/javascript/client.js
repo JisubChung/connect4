@@ -64,6 +64,7 @@ socket.on('reset', function(data) {
 });
 
 socket.on('leave', function() {
+    console.log('testets');
     $('.turn-indicator').text('your opponent left, refresh to start a new game').css('color', 'blue');
 });
 
