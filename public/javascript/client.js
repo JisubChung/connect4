@@ -11,12 +11,24 @@ function Player(room, pid) {
     this.pid = pid;
 }
 
-var room = $('input').data('room');
-var player = new Player(room, '', '');
+var room;// = $('input').attr('data-room');
+var player;// = new Player(room, '', '');
 
 // when we connect, join room
 socket.on('connect', function() {
+    room = $('input').attr('data-room');
+    player = new Player(room, '', '');
     socket.emit('join', {room: room});
+});
+
+socket.on('notify', function(data) {
+    if(data.connected === 1) {
+        if(data.turn) {
+            $('.turn-indicator').text('it\'s your turn').css('color', 'green');
+        } else {
+            $('.turn-indicator').text('it\'s NOT your turn').css('color', 'red');
+        }
+    }
 });
 
 // listen for an 'assign' for which player we are
@@ -27,16 +39,6 @@ socket.on('assign', function(data) {
         $('.p2-score p').css('background', '#fdbf56')
     } else {
         $('.p2-score p').css('background', '#fdbf56')
-    }
-});
-
-socket.on('notify', function(data) {
-    if(data.connected === 1) {
-        if(data.turn) {
-            $('.turn-indicator').text('it\'s your turn').css('color', 'green');
-        } else {
-            $('.turn-indicator').text('it\'s NOT your turn').css('color', 'red');
-        }
     }
 });
 

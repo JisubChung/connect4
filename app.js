@@ -84,7 +84,6 @@ io.on('connection', function (socket) {
 
         // if there is someone waiting for a game
         if(data.room in games) {
-            console.log('test');
             games[data.room].player1.emit('notify', {connected: 1, turn: true});
             socket.emit('notify', {connected: 1, turn: false});
             if(typeof games[data.room].player2 != "undefined") {
@@ -184,6 +183,7 @@ io.on('connection', function (socket) {
             io.sockets.in(room).emit('leave');
             if(room in games) {
                 delete games.room;
+                console.log(games);
             }
         };
     });
