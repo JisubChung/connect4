@@ -115,8 +115,7 @@ $(document).ready(function () {
     });
     $('.row3').click(function() {
         if($(this).text() === 'Click here to start new game') {
-            window.location.href = window.location.host;
-            //console.log(window.location.host);
+            window.location.href = window.location.protocol + '//' + window.location.host;
         }
     });
 });
