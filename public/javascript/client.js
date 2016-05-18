@@ -16,6 +16,7 @@ var player;// = new Player(room, '', '');
 
 // when we connect, join room
 socket.on('connect', function() {
+    console.log(window.location.host);
     room = $('input').attr('data-room');
     player = new Player(room, '', '');
     socket.emit('join', {room: room});
@@ -29,6 +30,9 @@ socket.on('notify', function(data) {
             $('.turn-indicator').text('it\'s NOT your turn').css('color', 'red');
         }
     }
+    var url = window.location.host;
+    $('.row3 .form-group').replaceWith('<a href=' + url + '>Click here to start new game</a>');
+    $('.row3 input').css('display','none');
 });
 
 // listen for an 'assign' for which player we are
@@ -65,7 +69,7 @@ socket.on('reset', function(data) {
 
 socket.on('leave', function() {
     console.log('testets');
-    $('.turn-indicator').text('your opponent left, refresh to start a new game').css('color', 'blue');
+    $('.turn-indicator').text('your opponent left').css('color', 'blue');
 });
 
 socket.on('drop', function(data) {

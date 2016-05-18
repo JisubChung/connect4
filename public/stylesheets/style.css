@@ -14,12 +14,16 @@ body {
 }
 
 .header a, a:link, a:visited, a:hover, a:active {
-    color: #d8d2c4;
+    color: black;
     text-decoration: none;
 }
 
 .row {
     background-color: #a9aba9;
+}
+
+.row3 {
+    background-color: #d8d2c4;
 }
 
 .row2 {
@@ -142,14 +146,13 @@ p {
 .form-group {
     background-color: #d8d2c4;
     color: black;
-    height: 50px;
+    height: 20px;
 }
-    .form-group label {
-        position: relative;
-    }
-    .form-group input {
-        position: relative;
-        top: 58%;
-        left: -78px;
-        width: 200px;
-    }
+
+input {
+    width: 50%;
+}
+
+a {
+
+}
